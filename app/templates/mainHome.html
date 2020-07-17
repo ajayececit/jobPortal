@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Job Portal</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="{{ url_for('static', filename='js/form.js') }}"></script>
+        <style>
+            body{
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            }
+            #tab_bar{
+                height: 50px;
+                padding: 0 24px;
+                color: #c9e2f1;
+                background: #2B7FC3;
+                border-top: 4px solid #1D5C8F;
+                border-bottom: 2px solid #D7D5D4;
+            }
+            #wrap {
+                padding-bottom: 60px;
+            }
+            #wrap {
+                margin: 0 auto;
+                width: 928px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            ul#gnav {
+                margin: 0;
+                float: right;
+            }
+            #gnav button{
+                padding: 0;
+            
+            }
+            ul#gnav li:first-child {
+                padding-left: 0;
+                background-image: none;
+            }
+
+            ul#gnav li {
+                list-style-type: none;
+                float: left;
+                margin: 0;
+                height: 50px;
+                padding-left: 20px;
+                line-height: 50px;
+                text-shadow: -1px -1px 1px #16608e;
+            }
+            #input_section{
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                margin: 0 auto;
+                width: 428px;
+                padding: 20px;
+                background: lightgray;
+            }
+            #search_btn{
+                padding: 0.5rem 1rem;
+                color: white;
+                background: black;
+                border-radius: 5px;
+            }
+            input{
+                padding: 0.5rem;
+            }
+            .link_btns{
+                color: white;
+            }
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+                }
+
+                tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        </style>
+        <script>
+            document.getElementById("search_btn").addEventListener("click",makePostCall);
+            var makePostCall = function(){
+            let textVal = document.getElementById("field").value;
+            let url = "url"+"/jobs?location=", textVal;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    response = JSON.parse(xhr.responseText);
+                    if (response) {
+                        console.log(response);
+                    }
+                }
+            };  
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tab_bar">
+            <div id="wrap">
+                <h2 id="logo">
+                    Job Portal 
+                </h2>
+                <ul id="gnav">
+                <li><a href="{{ url_for('jobList') }}" class="link_btns">All Jobs</a></li>
+                <li><a href="{{ url_for('syncJob') }}" class="link_btns">Sync Job</a></li>
+                </ul>
+            </div>
+        </div>
+        <form action = "{{ url_for('jobList') }}" method = "POST">
+            <div id="input_section">
+                <input type="text" id = "title" name = "title" placeholder="Select Title">
+                <input type="text" id = "location" name = "location" placeholder="Select Location">
+                <input type = "submit" value = "Submit">
+            </div>
+        </form>
+
+        <div id="jobs_table">
+            <ul>
+                {% if jobs|length == 0 %}
+                    <p> No Jobs for the given criteria </p>
+                {% endif %}
+                {% if jobs|length > 1 %}
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Company</th>
+                            <th>Job Title</th>
+                            <th>Job Location</th>
+                            <th>Job ID</th>
+                        </tr>
+                        {% for job in jobs %}
+                        <TR>
+                            <TD class="c1">{{job.id}}</TD>
+                            <TD class="c2">{{job.company}}</TD>
+                            <TD class="c3">{{job.title}}</TD>
+                            <TD class="c4">{{job.location}}</TD>
+                            <TD class="c5">{{job.jobID}}</TD>
+                        </TR>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </ul>
+        </div>
+    </body>
+</html>
